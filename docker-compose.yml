@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: deployments/Dockerfile.deploy
+    ports:
+      - "9000:9000"
+    env_file:
+      - .envs/.env.production
+    volumes:
+      - .:/application
+
+  test:
+    build:
+      context: .
+      dockerfile: deployments/tests/Dockerfile.test
+    env_file:
+      - .envs/.env.testing
+    volumes:
+      - .:/application

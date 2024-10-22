@@ -4,20 +4,15 @@ from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from models import User
+# from models import User
 from settings import settings
-from database import SessionLocal
+# from database import SessionLocal
+from api.v1.repositories import FirebaseRepository
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -29,7 +24,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     encoded_jwt = jwt.encode(to_encode, settings.private_key, algorithm=settings.jwt_algorithm)
     return encoded_jwt
 
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -55,7 +50,8 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
     except jwt.JWTError:
         raise credentials_exception
 
-    user = db.query(User).filter(User.id == user_id).first()
+    # user = db.query(User).filter(User.id == user_id).first()
+    user = FirebaseRepository.get_user(user_id)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -64,10 +60,11 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
         )
     return user
 
-def authenticate_user(db: Session, username: str, password: str):
-    user = db.query(User).filter(User.username == username).first()
+def authenticate_user(username: str, password: str):
+    # user = db.query(User).filter(User.username == username).first()
+    user = FirebaseRepository.get_user(username)
     if not user:
         return False
-    if not pwd_context.verify(password, user.hashed_password):
+    if not pwd_context.verify(password, user["hashed_password"]):
         return False
     return user

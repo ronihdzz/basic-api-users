@@ -1,11 +1,11 @@
 from fastapi import FastAPI
-from models import Base
-from database import engine
+#from models import Base
+#from database import engine
 from api.v1.endpoints import router as api_router
 from api.endpoints import router as index_router
 from settings import settings
 
-Base.metadata.create_all(bind=engine)
+#Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=settings.project_name,

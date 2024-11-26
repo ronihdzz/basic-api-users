@@ -1,4 +1,5 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
+from typing import List, Dict, Optional
 
 class UserBase(BaseModel):
     username: str
@@ -22,3 +23,36 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: str | None = None
+
+class EdificioCreateSchema(BaseModel):
+    nombre: str
+    latitud: str
+    longitud: str
+
+class SalonCreateSchema(BaseModel):
+    edificio_id: str
+    tipo: str
+    cuestionarios_activos: List[str] = [None]
+
+class PreguntaSchema(BaseModel):
+    pregunta: str
+    tipo_pregunta: str
+    opciones: Optional[Dict[str, List[str]]] = None
+
+class CuestionarioCreateSchema(BaseModel):
+    autor: str
+    nombre: str
+    preguntas: list[PreguntaSchema]
+
+class CuestionarioFirebaseSchema(BaseModel):
+    autor: str
+    nombre: str
+    preguntas: dict[str, PreguntaSchema]
+
+class RespuestaCreateSchema(BaseModel):
+    cuestionario_id: str
+    salon_id: str
+    usuario_id: str
+    pregunta_id: str
+    payload: Dict[str, Optional[str]]
+    fecha: str

@@ -136,6 +136,7 @@ def add_pregunta_to_cuestionario(cuestionario_id: str, pregunta: PreguntaSchema)
         raise HTTPException(status_code=404, detail="Cuestionario no encontrado")
     
     pregunta_id = str(uuid.uuid4())
+    cuestionario['preguntas'] = cuestionario.get('preguntas', {})
     cuestionario['preguntas'][pregunta_id] = pregunta.dict()
     FirebaseRepository.update_cuestionario(cuestionario_id, cuestionario)
     return {"id": pregunta_id, **pregunta.dict()}
@@ -162,4 +163,22 @@ def create_respuesta(respuesta: RespuestaCreateSchema):
     respuesta_id = str(uuid.uuid4())
     FirebaseRepository.insert_respuesta(respuesta_id, respuesta.dict())
     return {"id": respuesta_id, **respuesta.dict()}
+
+@router.put("/respuestas/{respuesta_id}")
+def update_respuesta(respuesta_id: str, respuesta: RespuestaCreateSchema):
+    existing_respuesta = FirebaseRepository.get_respuesta(respuesta_id)
+    if not existing_respuesta:
+        raise HTTPException(status_code=404, detail="Respuesta no encontrada")
+    
+    FirebaseRepository.update_respuesta(respuesta_id, respuesta.dict())
+    return {"detail": "Respuesta actualizada"}
+
+@router.delete("/respuestas/{respuesta_id}")
+def delete_respuesta(respuesta_id: str):
+    existing_respuesta = FirebaseRepository.get_respuesta(respuesta_id)
+    if not existing_respuesta:
+        raise HTTPException(status_code=404, detail="Respuesta no encontrada")
+    
+    FirebaseRepository.delete_respuesta(respuesta_id)
+    return {"detail": "Respuesta eliminada"}
 

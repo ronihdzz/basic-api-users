@@ -24,38 +24,38 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     user_id: str | None = None
 
-class EdificioCreateSchema(BaseModel):
-    nombre: str
-    latitud: str
-    longitud: str
-
-class TipoSalonCreateSchema(BaseModel):
+class BuildingCreateSchema(BaseModel):
     name: str
-    cuestionarios_activos: List[str] = [None]
+    latitude: str
+    longitude: str
 
-class SalonCreateSchema(BaseModel):
-    edificio_id: str
-    type_salon_id: str
+class RoomTypeCreateSchema(BaseModel):
+    name: str
+    active_questionnaires: List[str] = [None]
 
-class PreguntaSchema(BaseModel):
-    pregunta: str
-    tipo_pregunta: str
-    opciones: Optional[Dict[str, List[str]]] = None
+class RoomCreateSchema(BaseModel):
+    building_id: str
+    room_type_id: str
 
-class CuestionarioCreateSchema(BaseModel):
-    autor: str
-    nombre: str
-    preguntas: list[PreguntaSchema]
+class QuestionSchema(BaseModel):
+    question: str
+    question_type: str
+    options: Optional[Dict[str, List[str]]] = None
 
-class CuestionarioFirebaseSchema(BaseModel):
-    autor: str
-    nombre: str
-    preguntas: dict[str, PreguntaSchema]
+class QuestionnaireCreateSchema(BaseModel):
+    author: str
+    name: str
+    questions: list[QuestionSchema]
 
-class RespuestaCreateSchema(BaseModel):
-    cuestionario_id: str
-    salon_id: str
-    usuario_id: str
-    pregunta_id: str
+class QuestionnaireFirebaseSchema(BaseModel):
+    author: str
+    name: str
+    questions: dict[str, QuestionSchema]
+
+class AnswerCreateSchema(BaseModel):
+    questionnaire_id: str
+    room_id: str
+    user_id: str
+    question_id: str
     payload: Dict[str, Optional[str]]
-    fecha: str
+    date: str

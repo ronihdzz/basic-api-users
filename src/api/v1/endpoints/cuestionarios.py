@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, HTTPException
 from schemas import QuestionSchema, QuestionnaireCreateSchema, AnswerCreateSchema
 from api.v1.repositories import FirebaseRepository
@@ -18,12 +19,16 @@ def create_questionnaire(questionnaire: QuestionnaireCreateSchema):
     response = FirebaseRepository.insert_questionnaire(questionnaire_id, questionnaire)
     return {"id": questionnaire_id, **response.model_dump()}
 
-@router.get("/questionnaires/{questionnaire_id}")
-def get_cuestionario(questionnaire_id: str):
-    cuestionario = FirebaseRepository.get_cuestionario(questionnaire_id)
-    if not cuestionario:
-        raise HTTPException(status_code=404, detail="Cuestionario no encontrado")
-    return cuestionario
+@router.get("/questionnaires")
+def get_cuestionario(questionnaire_id: Optional[str] = None):
+    if questionnaire_id:
+        cuestionario = FirebaseRepository.get_questionnaire(questionnaire_id)
+        if not cuestionario:
+            raise HTTPException(status_code=404, detail="Cuestionario no encontrado")
+        return cuestionario
+    else:
+        cuestionarios = FirebaseRepository.get_questionnaire(None)
+        return cuestionarios
 
 @router.post("/questionnaires/{questionnaire_id}/questions")
 def add_question_to_questionnaire(questionnaire_id: str, question: QuestionSchema):

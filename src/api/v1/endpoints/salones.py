@@ -1,52 +1,52 @@
+from typing import Optional
 from fastapi import APIRouter, HTTPException
 from schemas import RoomTypeCreateSchema, RoomCreateSchema
 from api.v1.repositories import FirebaseRepository
 import uuid
 
-router = APIRouter(prefix="/classrooms")
+from fastapi import APIRouter, HTTPException
 
+# Subrouters
+rooms_router = APIRouter(prefix="/classrooms")
+room_types_router = APIRouter(prefix="/classrooms/types")
 
-#################################
-# Salones
-#################################
-
-@router.post("/classrooms")
+# Rutas de salones
+@rooms_router.post("/")
 def create_room(room: RoomCreateSchema):
     room_id = str(uuid.uuid4())
     FirebaseRepository.insert_room(room_id, room)
     return {"id": room_id, **room.model_dump()}
 
-@router.get("/classrooms/{room_id}")
-def get_room(room_id: str):
-    room = FirebaseRepository.get_room(room_id)
-    if not room:
-        raise HTTPException(status_code=404, detail="Salón no encontrado")
-    return room
+@rooms_router.get("/")
+def get_room(room_id: Optional[str] = None):
+    if room_id:
+        room = FirebaseRepository.get_room(room_id)
+        if not room:
+            raise HTTPException(status_code=404, detail="Salón no encontrado")
+        return room
+    else:
+        rooms = FirebaseRepository.get_room(None)
+        return rooms
 
-#################################
-# Tipos de salones
-#################################
-
-@router.post("/types")
+# Rutas de tipos de salones
+@room_types_router.post("/")
 def create_room_type(room_type: RoomTypeCreateSchema):
     room_type_id = str(uuid.uuid4())
     FirebaseRepository.insert_room_type(room_type_id, room_type)
     return {"id": room_type_id, **room_type.model_dump()}
 
-@router.get("/types/{room_type_id}")
-def get_room_type(room_type_id: str):
-    room_type = FirebaseRepository.get_room_type(room_type_id)
-    if not room_type:
-        raise HTTPException(status_code=404, detail="Tipo de salón no encontrado")
-    return room_type
+@room_types_router.get("/")
+def get_room_types(room_type_id: Optional[str] = None):
+    if room_type_id:
+        room_type = FirebaseRepository.get_room_type(room_type_id)
+        if not room_type:
+            raise HTTPException(status_code=404, detail="Tipo de salón no encontrado")
+        return room_type
+    else:
+        room_types = FirebaseRepository.get_list_room_types()
+        return room_types
 
-@router.get("/types")
-def get_list_room_types():
-    room_types = FirebaseRepository.get_list_room_types()
-    return room_types
-
-
-@router.post("/types/{room_type_id}/questionnaires/{questionnaire_id}")
+@room_types_router.post("/{room_type_id}/questionnaires/{questionnaire_id}")
 def add_questionnaire_to_room(room_type_id: str, questionnaire_id: str):
     room_type = FirebaseRepository.get_room_type(room_type_id)
     if not room_type:

@@ -36,6 +36,7 @@ class RoomTypeCreateSchema(BaseModel):
 class RoomCreateSchema(BaseModel):
     building_id: str
     room_type_id: str
+    name: str
 
 class QuestionSchema(BaseModel):
     question: str

@@ -29,10 +29,13 @@ class EdificioCreateSchema(BaseModel):
     latitud: str
     longitud: str
 
+class TipoSalonCreateSchema(BaseModel):
+    name: str
+    cuestionarios_activos: List[str] = [None]
+
 class SalonCreateSchema(BaseModel):
     edificio_id: str
-    tipo: str
-    cuestionarios_activos: List[str] = [None]
+    type_salon_id: str
 
 class PreguntaSchema(BaseModel):
     pregunta: str

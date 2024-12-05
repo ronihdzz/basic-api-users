@@ -1,6 +1,6 @@
 import uuid
 from database import firebase_session
-from schemas import CuestionarioCreateSchema, CuestionarioFirebaseSchema, SalonCreateSchema
+from schemas import CuestionarioCreateSchema, CuestionarioFirebaseSchema, SalonCreateSchema, TipoSalonCreateSchema
 from fastapi import HTTPException
 class FirebaseRepository:
 
@@ -30,10 +30,17 @@ class FirebaseRepository:
 
     @staticmethod
     def insert_salon(id, data: SalonCreateSchema):
-        edificio = data.edificio_id
+        # Validar que el edificio exista
         edificio = FirebaseRepository.get_edificio(id=data.edificio_id)
         if not edificio:
             raise HTTPException(status_code=404, detail="Edificio no encontrado")
+        
+        # Validar que el tipo de salón exista
+        tipo_salon = FirebaseRepository.get_tipo_salon(id=data.type_salon_id)
+        if not tipo_salon:
+            raise HTTPException(status_code=404, detail="Tipo de salón no encontrado")
+        
+        # Insertar el salón si las validaciones son exitosas
         firebase_session.put(f'/salones', id, data.model_dump())
 
     @staticmethod
@@ -80,3 +87,26 @@ class FirebaseRepository:
     @staticmethod
     def delete_respuesta(id):
         firebase_session.delete(f'/respuestas', id)
+
+
+
+
+    @staticmethod
+    def insert_tipo_salon(id, data: TipoSalonCreateSchema):
+        firebase_session.put(f'/tipos_salones', id, data.model_dump())
+
+    @staticmethod
+    def get_tipo_salon(id):
+        return firebase_session.get(f'/tipos_salones', id)
+
+    @staticmethod
+    def update_tipo_salon(id, data: TipoSalonCreateSchema):
+        firebase_session.put(f'/tipos_salones', id, data.model_dump())
+
+    @staticmethod
+    def delete_tipo_salon(id):
+        firebase_session.delete(f'/tipos_salones', id)
+
+    @staticmethod
+    def get_list_tipos_salones():
+        return firebase_session.get(f'/tipos_salones')

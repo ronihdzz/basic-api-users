@@ -48,8 +48,9 @@ coverage.xml
 # PyCharm
 .idea/
 
-# Visual Studio Code
-.vscode/
+# Keys
+public_key.pem
+private_key.pem
 
 # VS Code extensions
 *.code-workspace
@@ -57,7 +58,12 @@ coverage.xml
 # Environments
 .env
 .env.*
+env
 
+# database
+*.db
+*.sqlite3
+*.sqlite
 
 # Pyre type checker
 .pyre/

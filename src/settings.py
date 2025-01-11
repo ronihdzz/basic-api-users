@@ -1,18 +1,39 @@
 from pydantic import Field
 from pydantic_settings import SettingsConfigDict,BaseSettings
+from enum import StrEnum
+from shared.path import ENV_FILE_PATH,ENVIRONMENT
+from shared.envs import Environment
+
+class DatabaseType(StrEnum):
+    POSTGRESQL = "postgresql"
+    SQLITE = "sqlite"
+
 
 class Settings(BaseSettings):
-    project_name: str = "Basic API Users"
-    version: str = "1.0.0"
-    author: str = "Roni Hernandez"
-    profile_image_url: str = "https://davidronihdz99.pythonanywhere.com/media/fotosPerfil/roni_3dqmEf6.jpg"
-    database_name: str = Field(..., env="DATABASE_NAME")
-    environment: str = Field(..., env="ENVIRONMENT")
-    private_key: str = Field(..., env="PRIVATE_KEY")
-    public_key: str = Field(..., env="PUBLIC_KEY")
-    jwt_algorithm: str = "RS256"
-    jwt_expiration_minutes: int = 10
+    model_config = SettingsConfigDict(env_file=ENV_FILE_PATH, extra="ignore", case_sensitive=True)
+    ENVIRONMENT: Environment = ENVIRONMENT
+    
 
-    model_config = SettingsConfigDict(env_file=".env")
+    # Project 
+    # ----------------------------------------------------------------
+    
+    PROJECT_NAME: str = "Basic API Users"
+    VERSION: str = "1.0.0"
+    AUTHOR: str = "Roni Hernandez"
+    PROFILE_IMAGE_URL: str = "https://avatars.githubusercontent.com/u/40522363?s=400&u=6840da2e780e3ecdcca4c143e169da6950f2d9e3&v=4"
+    
+    # JWT
+    # ----------------------------------------------------------------
+    
+    PRIVATE_KEY: str 
+    PUBLIC_KEY: str
+    JWT_ALGORITHM: str = "RS256"
+    JWT_EXPIRATION_MINUTES: int = 10
+
+    # Database
+    # ----------------------------------------------------------------
+    
+    DATABASE_URL: str
+    DATABASE_TYPE: DatabaseType
 
 settings = Settings()

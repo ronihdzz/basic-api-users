@@ -1,0 +1,46 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Local FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "main:app",
+                "--port",
+                "9999",
+                "--reload"
+            ],
+            "cwd": "${workspaceFolder}/src",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "ENVIRONMENT": "local"
+            },
+            "jinja": true,
+            "python": "${workspaceFolder}/env/bin/python"
+        },
+        {
+            "name": "Development FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "main:app",
+                "--port",
+                "9999",
+                "--reload"
+            ],
+            "cwd": "${workspaceFolder}/src",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "ENVIRONMENT": "development"
+            },
+            "jinja": true,
+            "python": "${workspaceFolder}/env/bin/python"
+        }
+    ]
+}

@@ -1,13 +1,19 @@
 from fastapi import FastAPI
-from api.v1.endpoints import router as api_router
-from api.endpoints import router as index_router
+from fastapi.middleware import Middleware
+from api.router import router_users, router_healthcheck
 from settings import settings
-
+from shared.midllewares.envolve_pydantic import pydantic_validation_error_handler
+from shared.midllewares.envolve_responses import ErrorResponseMiddleware
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    version=settings.VERSION
+    version=settings.VERSION,
+    middleware=[
+        Middleware(ErrorResponseMiddleware)
+    ]
 )
 
-app.include_router(index_router)
-app.include_router(api_router, prefix="/v1", tags=["Users"])
+app.include_router(router_healthcheck)
+app.include_router(router_users)
+
+pydantic_validation_error_handler(app)

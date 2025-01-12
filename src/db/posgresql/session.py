@@ -11,15 +11,14 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, bind=engine)
 
-# TODO: Decidir si se va a usar o no
-# @contextmanager
-# def get_db():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
 
+@contextmanager
+def context_get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 def get_db():
     db = SessionLocal()

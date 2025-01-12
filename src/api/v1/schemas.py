@@ -42,3 +42,10 @@ class ResponseLoginUserSchema(BaseModel):
 class CreateLoginUserSchema(BaseModel):
     username: str
     password: str
+
+
+# Token
+# ----------------------------------------------------------
+
+class TokenDataSchema(BaseModel):
+    user_id: UUID

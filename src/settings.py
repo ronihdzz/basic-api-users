@@ -36,4 +36,14 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     DATABASE_TYPE: DatabaseType
 
+    # Swagger
+    # ----------------------------------------------------------------
+    
+    LOGIN_SWAGGER_URL: str = "/v1/users/login-swagger"
+    
+    # URLs
+    # ----------------------------------------------------------------
+    
+    PREFIX_API_USER : str = "/v1/users"
+
 settings = Settings()

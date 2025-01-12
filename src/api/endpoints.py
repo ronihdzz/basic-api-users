@@ -16,3 +16,7 @@ async def read_root(request: Request):
         "author": settings.AUTHOR,
         "profile_image_url": settings.PROFILE_IMAGE_URL
     })
+
+@router.get("/healthcheck")
+async def healthcheck():
+    return {"status": "OK"}
